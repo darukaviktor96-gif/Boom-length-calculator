@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crane Clearance Calculator</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 20px;
+}
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+}
+input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+h3 {
+    margin-top: 25px;
+}
+</style>
+</head>
+<body>
+
+<h2>Crane Clearance Calculator</h2>
+
+<label>Obstacle Height (m)</label>
+<input type="number" id="height" step="any">
+
+<label>Obstacle Distance From Crane (m)</label>
+<input type="number" id="obstacleDistance" step="any">
+
+<label>Landing Distance From Crane (m)</label>
+<input type="number" id="landingDistance" step="any">
+
+<label>Clearance Above Obstacle (m)</label>
+<input type="number" id="clearance" step="any" value="1">
+
+<button type="button" id="calcBtn">Calculate</button>
+
+<h3>Results</h3>
+
+<label>Required Tip Height (m)</label>
+<input type="text" id="tipHeightResult" readonly>
+
+<label>Minimum Boom Length (m)</label>
+<input type="text" id="boomLengthResult" readonly>
+
+<label>Boom Angle (°)</label>
+<input type="text" id="boomAngleResult" readonly>
+
+<label>Boom Height at Obstacle (m)</label>
+<input type="text" id="heightAtObstacleResult" readonly>
+
+<label>Distance Along Boom to Obstacle (m)</label>
+<input type="text" id="distanceAlongBoomResult" readonly>
+
+<script>
+document.getElementById('calcBtn').addEventListener('click', function () {
+
+    var h = Number(document.getElementById('height').value);
+    var ro = Number(document.getElementById('obstacleDistance').value);
+    var rl = Number(document.getElementById('landingDistance').value);
+    var c = Number(document.getElementById('clearance').value);
+
+    if (
+        !isFinite(h) || !isFinite(ro) || !isFinite(rl) || !isFinite(c) ||
+        h < 0 || ro <= 0 || rl <= 0 || ro >= rl
+    ) {
+        alert('Invalid input. Obstacle distance must be smaller than landing distance.');
+        return;
+    }
+
+    var tipHeight = (h + c) * (rl / ro);
+
+    var boomLength = Math.sqrt(
+        (rl * rl) +
+        (tipHeight * tipHeight)
+    );
+
+    var boomAngle =
+        Math.atan(tipHeight / rl) * 180 / Math.PI;
+
+    var heightAtObstacle =
+        tipHeight * (ro / rl);
+
+    var distanceAlongBoom =
+        Math.sqrt(
+            (ro * ro) +
+            (heightAtObstacle * heightAtObstacle)
+        );
+
+    document.getElementById('tipHeightResult').value = tipHeight.toFixed(3);
+    document.getElementById('boomLengthResult').value = boomLength.toFixed(3);
+    document.getElementById('boomAngleResult').value = boomAngle.toFixed(3);
+    document.getElementById('heightAtObstacleResult').value = heightAtObstacle.toFixed(3);
+    document.getElementById('distanceAlongBoomResult').value = distanceAlongBoom.toFixed(3);
+});
+</script>
+
+</body>
+</html>
